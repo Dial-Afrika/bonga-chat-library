@@ -23,8 +23,8 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   late IO.Socket socket;
-  TextEditingController _messageController = TextEditingController();
-  List<Widget> _messages = [];
+  final TextEditingController _messageController = TextEditingController();
+  final List<Widget> _messages = [];
 
   @override
   void initState() {
@@ -152,17 +152,15 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void dispose() {
-    socket.dispose();
-    super.dispose();
-  }
+  // void dispose() {
+  //   socket.dispose();
+  //   super.dispose();
+  // }
 
 
   @override
   Widget build(BuildContext context) {
-    if (widget.clientId == null ||
-        widget.ticketId == null ||
-        widget.socketId == null) {
+    if (widget.ticketId == null) {
       // Handle the case when values are null
       return Scaffold(
         appBar: AppBar(

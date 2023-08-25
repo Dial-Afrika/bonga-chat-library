@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> initializeChat() async {
     final response = await http.post(
-      Uri.parse('https://chatdesk-prod.dialafrika.com/webchat/1/process'),
+      Uri.parse('https://chatdesk-prod.dialafrika.com/mobilechat/1/process'),
       headers: {'Content-Type': 'application/json'},
       body: '{"route": "LIVE_CHAT"}',
     );
@@ -62,8 +62,14 @@ class _HomePageState extends State<HomePage> {
       // Listen for Socket.IO events
       socket.on('connect', (_) {
         print('Socket.IO connected ${socket.id}}');
-        // socket.emit('join', {'clientId': clientId, 'ticketId': ticketId});
+
       });
+
+      socket.on('message_from_agent', (data) {
+        // Handle incoming messages from the agent
+        print('Received message from agent: $data');
+      });
+
       socket.connect(); // Connect to the Socket.IO server
 
       socket.on('disconnect', (_) {
@@ -81,12 +87,6 @@ class _HomePageState extends State<HomePage> {
     } else {
       print('Failed to initialize chat');
     }
-
-    socket.on('message_from_agent', (data) {
-      // Handle incoming messages from the agent
-      print('Received message from agent: $data');
-      // You can update the UI or perform any other actions here
-    });
 
   }
 
@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                       );
                     } else {
                       // Handle the case when clientId, ticketId, or socketId is null
-                      return Scaffold(
+                      return const Scaffold(
                         body: Center(
                           child: CircularProgressIndicator(),
                         ),
