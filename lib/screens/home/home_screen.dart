@@ -65,9 +65,19 @@ class _HomePageState extends State<HomePage> {
 
       });
 
+      socket.on('agent_found', (data) {
+        // Handle agent found
+        print('Assigned to: $data');
+      });
+
       socket.on('message_from_agent', (data) {
         // Handle incoming messages from the agent
         print('Received message from agent: $data');
+      });
+
+      socket.on('live_ticket_closed', (data) {
+        // Handle live ticket closed
+        print('Live ticket closed: $data');
       });
 
       socket.connect(); // Connect to the Socket.IO server

@@ -34,18 +34,27 @@ class _ChatScreenState extends State<ChatScreen> {
     // Subscribe to 'message_from_agent' event
     socket.on('message_from_agent', (data) {
       // Handle incoming messages from the agent
-      print('Received message from agent in ChatScreen: $data');
+      print('Received message from agent: $data');
+
+      final jsonData = json.decode(data);
+      final message = jsonData['message'];
+      final agentId = message['agentId'];
+      final text = message['message'];
+      final timestamp = DateTime.parse(message['created_at']);
+
+      final agentMessage = AgentMessage(
+        senderId: agentId,
+        agentId: agentId,
+        text: text,
+        timestamp: timestamp,
+      );
 
       setState(() {
-        final message = data['message'];
-        _messages.add(ChatMessage(
-          senderId: message['clientId'],
-          text: message['message'],
-          clientId: widget.clientId,
-          timestamp: DateTime.parse(message['created_at']),
-        ));
+        _messages.add(agentMessage);
       });
     });
+
+
 
     // Subscribe to 'message' event
     socket.on('message', (data) {
@@ -234,8 +243,7 @@ class ChatMessage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Align(
-        alignment:
-            senderId == clientId ? Alignment.centerRight : Alignment.centerLeft,
+        alignment: senderId == clientId ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           padding: const EdgeInsets.all(8.0),
           decoration: BoxDecoration(
@@ -251,3 +259,41 @@ class ChatMessage extends StatelessWidget {
     );
   }
 }
+
+class AgentMessage extends StatelessWidget {
+  final String senderId;
+  final String agentId;
+  final DateTime timestamp;
+  final String text;
+
+  const AgentMessage({
+    Key? key,
+    required this.senderId,
+    required this.agentId,
+    required this.text,
+    required this.timestamp,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Align(
+        alignment: senderId == agentId ? Alignment.centerLeft : Alignment.centerRight,
+        child: Container(
+          padding: const EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+            color: senderId == agentId ? Colors.grey : Colors.blue,
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Text(
+            text,
+            style: const TextStyle(color: Colors.black),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
