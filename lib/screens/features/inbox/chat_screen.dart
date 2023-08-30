@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
 
+import '../../../models/chat/chat.dart';
+
 class ChatScreen extends StatefulWidget {
   final String clientId;
   final String ticketId;
@@ -33,26 +35,32 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // Subscribe to 'message_from_agent' event
     socket.on('message_from_agent', (data) {
-      // Handle incoming messages from the agent
-      print('Received message from agent: $data');
+      print('Received data: $data'); // Print the received data
+      final jsonData = json.decode(data); // Parse the JSON data
+      print('Parsed JSON data: $jsonData'); // Print the parsed JSON data
 
-      final jsonData = json.decode(data);
-      final message = jsonData['message'];
-      final agentId = message['agentId'];
-      final text = message['message'];
-      final timestamp = DateTime.parse(message['created_at']);
+      if (jsonData is Map<String, dynamic>) {
+        final message = jsonData['message'] as String;
+        final createdAt = DateTime.parse(jsonData['created_at']);
+        final agentId = jsonData['agentId'];
+        final agentName = jsonData['agentName'];
 
-      final agentMessage = AgentMessage(
-        senderId: agentId,
-        agentId: agentId,
-        text: text,
-        timestamp: timestamp,
-      );
+        final agentMessageWidget = AgentMessage(
+          senderId: agentId,
+          agentId: agentId,
+          text: message,
+          timestamp: createdAt,
+          agentName: agentName,
+        );
 
-      setState(() {
-        _messages.add(agentMessage);
-      });
+        setState(() {
+          _messages.add(agentMessageWidget);
+        });
+      } else {
+        print('Received data is not a valid JSON map: $jsonData');
+      }
     });
+
 
 
 
@@ -161,10 +169,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  // void dispose() {
-  //   socket.dispose();
-  //   super.dispose();
-  // }
 
 
   @override
@@ -190,8 +194,27 @@ class _ChatScreenState extends State<ChatScreen> {
             child: ListView.builder(
               itemCount: _messages.length,
               itemBuilder: (BuildContext context, int index) {
-                return _messages[index];
+                final message = _messages[index];
+                if (message is AgentMessage) {
+                  return AgentMessage(
+                    senderId: message.agentId,
+                    agentId: message.agentId,
+                    text: message.text,
+                    timestamp: message.timestamp,
+                    agentName: message.agentName,
+                  );
+                } else if (message is ChatMessage) {
+                  return ChatMessage(
+                    senderId: message.senderId,
+                    text: message.text,
+                    clientId: message.clientId,
+                    timestamp: message.timestamp,
+                  );
+                }
+                return const SizedBox(); // Handle other message types if any
               },
+
+
             ),
           ),
           const Divider(),
@@ -265,13 +288,15 @@ class AgentMessage extends StatelessWidget {
   final String agentId;
   final DateTime timestamp;
   final String text;
+  final String agentName;
 
   const AgentMessage({
     Key? key,
     required this.senderId,
     required this.agentId,
-    required this.text,
     required this.timestamp,
+    required this.text,
+    required this.agentName,
   }) : super(key: key);
 
   @override
@@ -286,9 +311,22 @@ class AgentMessage extends StatelessWidget {
             color: senderId == agentId ? Colors.grey : Colors.blue,
             borderRadius: BorderRadius.circular(16.0),
           ),
-          child: Text(
-            text,
-            style: const TextStyle(color: Colors.black),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '$agentName (Agent)',
+                style: TextStyle(
+                  color: senderId == agentId ? Colors.black : Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                text,
+                style: const TextStyle(color: Colors.black),
+              ),
+            ],
           ),
         ),
       ),
