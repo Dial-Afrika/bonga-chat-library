@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
 
-import '../../../models/chat/chat.dart';
 
 class ChatScreen extends StatefulWidget {
   final String clientId;
