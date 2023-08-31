@@ -254,32 +254,32 @@ class _HomePageState extends State<HomePage> {
           // ),
 
 
-          Expanded(
-            child: buildSectionCard(
-              title: 'Categories',
-              icon: Icons.category,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const CategoryScreen()),
-                );
-              },
-            ),
-          ),
-          Expanded(
-            child: buildSectionCard(
-              title: 'Services',
-              icon: Icons.home_repair_service_outlined,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ServiceScreen()),
-                );
-              },
-            ),
-          ),
+          // Expanded(
+          //   child: buildSectionCard(
+          //     title: 'Categories',
+          //     icon: Icons.category,
+          //     onTap: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //             builder: (context) => const CategoryScreen()),
+          //       );
+          //     },
+          //   ),
+          // ),
+          // Expanded(
+          //   child: buildSectionCard(
+          //     title: 'Services',
+          //     icon: Icons.home_repair_service_outlined,
+          //     onTap: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //             builder: (context) => const ServiceScreen()),
+          //       );
+          //     },
+          //   ),
+          // ),
         ],
       ),
     );
