@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
 
+import '../features/faqs/categories_screen.dart';
+import '../features/services/services_screen.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -118,7 +121,6 @@ class _HomePageState extends State<HomePage> {
     final response = await http.post(
       Uri.parse('https://chatdesk-prod.dialafrika.com/mobilechat/1/process'),
       headers: {'Content-Type': 'application/json'},
-      body: '{"route": "LIVE_CHAT"}',
     );
 
     if (response.statusCode == 200) {
@@ -135,20 +137,6 @@ class _HomePageState extends State<HomePage> {
 
       });
 
-      // socket.on('agent_found', (data) {
-      //   // Handle agent found
-      //   print('Assigned to: $data');
-      // });
-      //
-      // socket.on('message_from_agent', (data) {
-      //   // Handle incoming messages from the agent
-      //   print('Received message from agent: $data');
-      // });
-
-      // socket.on('live_ticket_closed', (data) {
-      //   // Handle live ticket closed
-      //   print('Live ticket closed: $data');
-      // });
 
       socket.connect(); // Connect to the Socket.IO server
 
@@ -219,41 +207,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          // Expanded(
-          //   child: buildSectionCard(
-          //     title: 'Inbox',
-          //     icon: Icons.mail_outline_rounded,
-          //     onTap: () async {
-          //       // Initialize the chat
-          //       await initializeChat();
-          //       // Navigate to the ChatScreen
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(builder: (context) {
-          //           if (clientId != null &&
-          //               ticketId != null &&
-          //               socketId != null) {
-          //             return ChatScreen(
-          //               clientId: clientId!,
-          //               ticketId: ticketId!,
-          //               socketId: socketId!,
-          //               socket: socket,
-          //             );
-          //           } else {
-          //             // Handle the case when clientId, ticketId, or socketId is null
-          //             return const Scaffold(
-          //               body: Center(
-          //                 child: CircularProgressIndicator(),
-          //               ),
-          //             );
-          //           }
-          //         }),
-          //       );
-          //     },
-          //   ),
-          // ),
-
-
           // Expanded(
           //   child: buildSectionCard(
           //     title: 'Categories',

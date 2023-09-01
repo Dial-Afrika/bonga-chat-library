@@ -32,36 +32,40 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     socket = widget.socket; // Use the provided socket connection
 
+    socket.on('agent_found', (data) {
+      // Handle agent found
+      print('Assigned to: $data');
+    });
+
     // Subscribe to 'message_from_agent' event
     socket.on('message_from_agent', (data) {
-      print('Received data: $data'); // Print the received data
-      final jsonData = json.decode(data); // Parse the JSON data
-      print('Parsed JSON data: $jsonData'); // Print the parsed JSON data
+      print('Received data: $data');
 
-      if (jsonData is Map<String, dynamic>) {
-        final message = jsonData['message'] as String;
-        final createdAt = DateTime.parse(jsonData['created_at']);
-        final agentId = jsonData['agentId'];
-        final agentName = jsonData['agentName'];
+      if (data is Map<String, dynamic>) {
+        final message = data['message'] as String;
+        final createdAt = DateTime.parse(data['created_at']);
+        final agentId = data['agentId'];
+        // final agentName = jsonData['name'];
 
         final agentMessageWidget = AgentMessage(
           senderId: agentId,
           agentId: agentId,
           text: message,
           timestamp: createdAt,
-          agentName: agentName,
         );
 
         setState(() {
           _messages.add(agentMessageWidget);
         });
       } else {
-        print('Received data is not a valid JSON map: $jsonData');
+        print('Received data is not a valid JSON map: $data');
       }
     });
 
-
-
+    socket.on('live_ticket_closed', (data) {
+      // Handle live ticket closed
+      print('Live ticket closed: $data');
+    });
 
     // Subscribe to 'message' event
     socket.on('message', (data) {
@@ -200,7 +204,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     agentId: message.agentId,
                     text: message.text,
                     timestamp: message.timestamp,
-                    agentName: message.agentName,
+                    // agentName: message.agentName,
                   );
                 } else if (message is ChatMessage) {
                   return ChatMessage(
@@ -287,7 +291,7 @@ class AgentMessage extends StatelessWidget {
   final String agentId;
   final DateTime timestamp;
   final String text;
-  final String agentName;
+  // final String? agentName;
 
   const AgentMessage({
     Key? key,
@@ -295,7 +299,7 @@ class AgentMessage extends StatelessWidget {
     required this.agentId,
     required this.timestamp,
     required this.text,
-    required this.agentName,
+    // this.agentName,
   }) : super(key: key);
 
   @override
@@ -313,13 +317,13 @@ class AgentMessage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '$agentName (Agent)',
-                style: TextStyle(
-                  color: senderId == agentId ? Colors.black : Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              // Text(
+              //   '$agentName (Agent)',
+              //   style: TextStyle(
+              //     color: senderId == agentId ? Colors.black : Colors.white,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
               const SizedBox(height: 4),
               Text(
                 text,
