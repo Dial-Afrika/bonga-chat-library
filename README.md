@@ -131,6 +131,12 @@ On clicking the Chat Icon a ticket is created for the user on the `Bonga Ticketi
       });
 ```
 
+## 6. Integrating into Existing IOS and Android Projects
+
+Kindly refer to the Official Flutter Documentation on how to integrate Flutter into existing projects.
+
+https://docs.flutter.dev/add-to-app
+
 ## Styling
 
 You can customize the appearance of the chat interface to match your app's design

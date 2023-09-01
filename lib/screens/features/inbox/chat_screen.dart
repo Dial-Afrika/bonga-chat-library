@@ -26,6 +26,8 @@ class _ChatScreenState extends State<ChatScreen> {
   late IO.Socket socket;
   final TextEditingController _messageController = TextEditingController();
   final List<Widget> _messages = [];
+  late String agentName = 'Agent';
+
 
   @override
   void initState() {
@@ -35,7 +37,15 @@ class _ChatScreenState extends State<ChatScreen> {
     socket.on('agent_found', (data) {
       // Handle agent found
       print('Assigned to: $data');
+
+      if (data is Map<String, dynamic> && data['agent'] != null) {
+        final agentData = data['agent'] as Map<String, dynamic>;
+        setState(() {
+          agentName = agentData['name'];
+        });
+      }
     });
+
 
     // Subscribe to 'message_from_agent' event
     socket.on('message_from_agent', (data) {
@@ -45,7 +55,7 @@ class _ChatScreenState extends State<ChatScreen> {
         final message = data['message'] as String;
         final createdAt = DateTime.parse(data['created_at']);
         final agentId = data['agentId'];
-        // final agentName = jsonData['name'];
+        // final agentName = data['name'];
 
         final agentMessageWidget = AgentMessage(
           senderId: agentId,
@@ -63,9 +73,45 @@ class _ChatScreenState extends State<ChatScreen> {
     });
 
     socket.on('live_ticket_closed', (data) {
-      // Handle live ticket closed
-      print('Live ticket closed: $data');
+      print('Ticket closed: $data');
+
+      if (data is Map<String, dynamic> &&
+          data['live_ticket_closed'] != null) {
+        final ticketClosedData =
+        data['live_ticket_closed'] as Map<String, dynamic>;
+        final message = ticketClosedData['message'] as String;
+        final updatedAt =
+        DateTime.parse(ticketClosedData['updated_at']);
+
+        // Show a dialog to inform the user about the survey
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Ticket Closed'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(message),
+                  const SizedBox(height: 16), // Add some spacing
+                  const Text('Thank you for using our service.'),
+                  const Text('A short survey will be coming up.'),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     });
+
 
     // Subscribe to 'message' event
     socket.on('message', (data) {
@@ -165,7 +211,7 @@ class _ChatScreenState extends State<ChatScreen> {
       }
 
       setState(() {
-        _messages.addAll(newMessages); // Add the new messages to the existing list
+        _messages.addAll(newMessages);
       });
     } else {
       print('Failed to retrieve message history');
@@ -204,7 +250,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     agentId: message.agentId,
                     text: message.text,
                     timestamp: message.timestamp,
-                    // agentName: message.agentName,
+                    agentName: agentName,
                   );
                 } else if (message is ChatMessage) {
                   return ChatMessage(
@@ -291,7 +337,7 @@ class AgentMessage extends StatelessWidget {
   final String agentId;
   final DateTime timestamp;
   final String text;
-  // final String? agentName;
+  final String? agentName;
 
   const AgentMessage({
     Key? key,
@@ -299,7 +345,7 @@ class AgentMessage extends StatelessWidget {
     required this.agentId,
     required this.timestamp,
     required this.text,
-    // this.agentName,
+    this.agentName,
   }) : super(key: key);
 
   @override

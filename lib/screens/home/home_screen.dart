@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
 
-import '../features/faqs/categories_screen.dart';
-import '../features/services/services_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -49,23 +47,6 @@ class _HomePageState extends State<HomePage> {
 
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // Initialize Socket.IO connection
-  //   socket = IO.io('https://chatdesk-prod.dialafrika.com', <String, dynamic>{
-  //     'transports': ['websocket'],
-  //   });
-  //
-  //   socket.on('connect', (_) {
-  //     // Retrieve and store the socket ID
-  //     setState(() {
-  //       socketId = socket.id;
-  //     });
-  //     print('Socket.IO connected: ${socket.id}');
-  //   });
-  // }
-
   @override
   void dispose() {
     socket.dispose(); // Close the Socket.IO connection when done
@@ -76,12 +57,6 @@ class _HomePageState extends State<HomePage> {
     _ticketMessageController.dispose();
     super.dispose();
   }
-
-  // @override
-  // void dispose() {
-  //   socket.dispose(); // Close the Socket.IO connection when done
-  //   super.dispose();
-  // }
 
   Future<void> initializeChatAndNavigate() async {
     final response = await http.post(
@@ -158,6 +133,34 @@ class _HomePageState extends State<HomePage> {
 
   }
 
+  final csatQuestions = {
+    'ticketId': 'widget.ticketId',
+    'questions': [
+      {
+        'question': 'Did the agent resolve your issue?',
+        'options': ['Yes', 'No'],
+        'selectedOption': 'Yes',
+      },
+      {
+        'question': 'How satisfied are you with our service?',
+        'options': ['1', '2', '3', '4', '5'],
+        'selectedOption': '3',
+      },
+      {
+        'question': 'How would you rate us?',
+        'options': ['1', '2', '3', '4', '5'],
+        'selectedOption': '3',
+      },
+      {
+        'question': 'How likely are you to recommend us?',
+        'options': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+        'selectedOption': '5',
+      },
+
+    ],
+  };
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -195,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                     TextField(
                       controller: _ticketMessageController,
                       decoration: const InputDecoration(
-                        labelText: 'Ticket Message',
+                        labelText: 'What can we help you with?',
                       ),
                     ),
                     ElevatedButton(
