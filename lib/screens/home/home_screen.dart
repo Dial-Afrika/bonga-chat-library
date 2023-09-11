@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> initializeChatAndNavigate() async {
     final response = await http.post(
-      Uri.parse('https://chatdesk-prod.dialafrika.com/webchat/initialize-livechat/without-client/?organizationId=1'),
+      Uri.parse('https://chatdesk-prod.dialafrika.com/mobilechat/initialize-livechat/without-client/?organizationId=1'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         "contactName": _nameController.text,

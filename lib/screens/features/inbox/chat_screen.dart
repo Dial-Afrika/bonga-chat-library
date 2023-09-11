@@ -151,7 +151,7 @@ class _ChatScreenState extends State<ChatScreen> {
       print('Message sent: $message');
 
       final response = await http.post(
-        Uri.parse('https://chatdesk-prod.dialafrika.com/webchat/1/process'),
+        Uri.parse('https://chatdesk-prod.dialafrika.com/mobilechat/1/process'),
         headers: {'Content-Type': 'application/json'},
         body: jsonMessage,
       );
@@ -187,7 +187,7 @@ class _ChatScreenState extends State<ChatScreen> {
     };
 
     final response = await http.post(
-      Uri.parse('https://chatdesk-prod.dialafrika.com/webchat/1/process'),
+      Uri.parse('https://chatdesk-prod.dialafrika.com/mobilechat/1/process'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(payload),
     );
