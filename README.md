@@ -142,4 +142,4 @@ https://docs.flutter.dev/add-to-app
 You can customize the appearance of the chat interface to match your app's design
 
 
-Please replace placeholders like `[YOUR_OrganizationID]`, e.g https://chatdesk-prod.dialafrika.com/mobilechat/organization_id/process, and customize the application according to your project's details. You can also create separate markdown files for styling.
+Please replace placeholders like `[YOUR_API_KEY]`, e.g  '''String apiKey = 'YOUR_API_KEY_HERE';''' , and customize the application according to your project's details. You can also create separate markdown files for styling.

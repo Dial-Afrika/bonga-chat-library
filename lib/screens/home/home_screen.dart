@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   String? clientId;
   String? ticketId;
   late String socketId;
+  String apiKey = 'YOUR_API_KEY_HERE'; // Set your API key here
 
   late TextEditingController _nameController;
   late TextEditingController _emailController;
@@ -58,6 +59,22 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  Future<void> fetchOrganizationId() async {
+    final response = await http.get(
+      Uri.parse('https://apiprod.dialafrika.com/organisations/$apiKey'),
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      final organizationId = responseData['organizationId'];
+
+      // Now you have the organization ID, you can use it to initialize chat.
+      await initializeChat(organizationId);
+    } else {
+      print('Failed to fetch organization ID');
+    }
+  }
+
   Future<void> initializeChatAndNavigate() async {
     final response = await http.post(
       Uri.parse('https://chatdesk-prod.dialafrika.com/mobilechat/initialize-livechat/without-client/?organizationId=1'),
@@ -92,26 +109,22 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> initializeChat() async {
+  Future<void> initializeChat(String organizationId) async {
     final response = await http.post(
-      Uri.parse('https://chatdesk-prod.dialafrika.com/mobilechat/1/process'),
+      Uri.parse('https://chatdesk-prod.dialafrika.com/mobilechat/$organizationId/process'),
       headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
       // Parse the JSON response
       final responseData = json.decode(response.body);
-      clientId = responseData['data']['payload']['message']
-      ['clientId']; // Assign to instance variable
-      ticketId = responseData['data']['payload']['message']
-      ['ticketId']; // Assign to instance variable
+      clientId = responseData['data']['payload']['message']['clientId']; // Assign to instance variable
+      ticketId = responseData['data']['payload']['message']['ticketId']; // Assign to instance variable
 
       // Listen for Socket.IO events
       socket.on('connect', (_) {
         print('Socket.IO connected ${socket.id}}');
-
       });
-
 
       socket.connect(); // Connect to the Socket.IO server
 
@@ -130,7 +143,6 @@ class _HomePageState extends State<HomePage> {
     } else {
       print('Failed to initialize chat');
     }
-
   }
 
   final csatQuestions = {
